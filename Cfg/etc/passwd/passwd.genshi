@@ -1,0 +1,43 @@
+{% python
+import os
+include = metadata.TemplateHelper['include']
+inc_files = include.IncludeHelper(metadata, path).files(os.path.basename(name))
+%}\
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+games:x:12:100:games:/usr/games:/sbin/nologin
+gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
+ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
+nobody:x:99:99:Nobody:/:/sbin/nologin
+usbmuxd:x:113:113:usbmuxd user:/:/sbin/nologin
+smolt:x:999:998:Smolt:/usr/share/smolt:/sbin/nologin
+avahi-autoipd:x:170:170:Avahi IPv4LL Stack:/var/lib/avahi-autoipd:/sbin/nologin
+dbus:x:81:81:System message bus:/:/sbin/nologin
+avahi:x:70:70:Avahi mDNS/DNS-SD Stack:/var/run/avahi-daemon:/sbin/nologin
+rpc:x:32:32:Rpcbind Daemon:/var/lib/rpcbind:/sbin/nologin
+rtkit:x:172:172:RealtimeKit:/proc:/sbin/nologin
+mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
+saslauth:x:998:996:"Saslauthd user":/var/empty/saslauth:/sbin/nologin
+openvpn:x:997:995:OpenVPN:/etc/openvpn:/sbin/nologin
+abrt:x:173:173::/etc/abrt:/sbin/nologin
+mailnull:x:47:47::/var/spool/mqueue:/sbin/nologin
+smmsp:x:51:51::/var/spool/mqueue:/sbin/nologin
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+rpcuser:x:29:29:RPC Service User:/var/lib/nfs:/sbin/nologin
+nfsnobody:x:65534:65534:Anonymous NFS User:/var/lib/nfs:/sbin/nologin
+chrony:x:996:994::/var/lib/chrony:/sbin/nologin
+tcpdump:x:72:72::/:/sbin/nologin
+qpidd:x:993:990:Owner of Qpidd Daemons:/var/lib/qpidd:/sbin/nologin
+ntp:x:38:38::/etc/ntp:/sbin/nologin
+{% for fname in sorted(inc_files) %}\
+{% include ${fname} %}
+{% end %}\

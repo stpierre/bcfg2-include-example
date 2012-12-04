@@ -1,0 +1,3 @@
+<Bundle name="iptables">
+  <Path name="/etc/sysconfig/iptables"/>
+</Bundle>

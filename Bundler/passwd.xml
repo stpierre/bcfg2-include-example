@@ -1,0 +1,3 @@
+<Bundle name="passwd">
+  <Path name="/etc/passwd"/>
+</Bundle>

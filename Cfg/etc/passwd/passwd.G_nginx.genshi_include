@@ -1,0 +1,1 @@
+nginx:x:989:986:Nginx web server:/var/lib/nginx:/sbin/nologin

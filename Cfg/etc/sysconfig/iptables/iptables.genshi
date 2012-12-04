@@ -1,0 +1,85 @@
+{% python
+inc_helper = metadata.TemplateHelper['include'].IncludeHelper(metadata, path)
+
+inc_files = dict()
+for rule in ["filter", "nat", "mangle", "raw"]:
+    inc_files[rule] = inc_helper.files(rule)
+%}\
+# ----------------------------- FILTER --------------------------------- #
+*filter
+# Default policies for FILTER:
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:NO-SMTP - [0:0]
+
+#Default rules
+#discard malicious packets
+-A INPUT -p tcp --tcp-flags ALL ACK,RST,SYN,FIN -j DROP
+-A INPUT -p tcp --tcp-flags SYN,FIN SYN,FIN -j DROP
+-A INPUT -p tcp --tcp-flags SYN,RST SYN,RST -j DROP
+#Allow incoming ICMP
+-A INPUT -p icmp -m icmp -j ACCEPT
+#Accept localhost traffic
+-A INPUT -i lo -j ACCEPT
+# Allow already established sessions to remain
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Deny inbound SMTP delivery (still allows outbound connections)
+-A INPUT -m state --state NEW -m tcp -p tcp --tcp-flags FIN,SYN,RST,ACK SYN --dport 25 -j NO-SMTP
+-A NO-SMTP -j LOG --log-prefix " Incoming SMTP (denied) "
+-A NO-SMTP -j DROP
+# custom FILTER rules:
+{% for fname in sorted(inc_files["filter"]) %}\
+########## Start ${include.describe_specificity(fname)} ##########
+{% include ${fname} %}\
+########## End ${include.describe_specificity(fname)} ##########
+
+{% end %}\
+COMMIT
+# ------------------------------- NAT ---------------------------------- #
+*nat
+# Default policies for NAT:
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+# custom NAT rules:
+{% for fname in sorted(inc_files["nat"]) %}\
+########## Start ${include.describe_specificity(fname)} ##########
+{% include ${fname} %}\
+########## End ${include.describe_specificity(fname)} ##########
+
+{% end %}\
+COMMIT
+# ----------------------------- MANGLE -------------------------------- #
+*mangle
+# Default CHAINS for MANGLE:
+:PREROUTING ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+
+# custom MANGLE rules:
+{% for fname in sorted(inc_files["mangle"]) %}\
+########## Start ${include.describe_specificity(fname)} ##########
+{% include ${fname} %}\
+########## End ${include.describe_specificity(fname)} ##########
+
+{% end %}\
+COMMIT
+# ------------------------------- RAW ---------------------------------- #
+*raw
+# Default policies for RAW:
+:PREROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+# custom RAW rules:
+{% for fname in sorted(inc_files["raw"]) %}\
+########## Start ${include.describe_specificity(fname)} ##########
+{% include ${fname} %}\
+########## End ${include.describe_specificity(fname)} ##########
+
+{% end %}\
+COMMIT
+# ---------------------------------------------------------------------- #
